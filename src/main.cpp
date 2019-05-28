@@ -124,12 +124,14 @@ int main(){
 	Board board{};
 	AI ai{ !player_turn };
 	
-	//turn will be switched at start of game loop
-	if(turn != player_turn)//player first see above comment
+	if(turn != player_turn)//player first, turns will be flipped at start of game loop
 	{
 		std::cout << "You go first!\n" << board;
 	}
-	else std::cout << "Computer gets to go first this time. Good luck!\n";
+	else 
+	{
+		std::cout << "Computer gets to go first this time. Good luck!\n";
+	}
 	
 	while(board.check_win(turn) == false && board.check_tie() == false)
 	{
@@ -148,10 +150,10 @@ int main(){
 		}
 		else //AI turn
 		{
+			std::cout << board;//print player turn before printing AI turn
+
 			int best_move = ai.best_move(board);
 			board.place( best_move, turn);
-			std::cout << board;
-
 			//print AI turn
 			std::array<char,3> col_chars = { 'A', 'B', 'C' };
 			char col_input = col_chars.at( best_move % 3 );
@@ -165,5 +167,8 @@ int main(){
 	{
 		std::cout << "Looks like its a tie...\n";
 	}
-	else std::cout << (turn == player_turn ? "You won!" : "The computer wins..." )  << '\n';
+	else 
+	{
+		std::cout << (turn == player_turn ? "You won!" : "The computer wins..." )  << '\n';
+	}
 }
