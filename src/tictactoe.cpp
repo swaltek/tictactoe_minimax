@@ -4,7 +4,6 @@
 #include <limits>
 #include <stdexcept>
 #include <string>
-#include <utility>
 #include <vector>
 
 BoardValue Board::at(int index) const{
@@ -72,7 +71,7 @@ std::vector<int> Board::possible_moves() const
 		if( bits.test(i) == false)
 		{
 			moves.push_back(i);
-		}
+		}#include <utility>
 	}
 	return moves;
 }
@@ -109,7 +108,7 @@ int AI::minimax(const Board& position, int depth, bool maxPlayer)
 			Board possible_position{ position };
 			possible_position.place(move, is_o);
 			int score = minimax(possible_position, ++depth, false);
-			if ( score >= max_move_score )
+			if ( score > max_move_score )
 			{
 				max_move = move;
 				max_move_score = score;
@@ -128,7 +127,7 @@ int AI::minimax(const Board& position, int depth, bool maxPlayer)
 			Board possible_position{ position };
 			possible_position.place(move, !is_o);
 			int score = minimax(possible_position, ++depth, true);
-			if ( score <= min_move_score )
+			if ( score < min_move_score )
 			{
 				min_move = move;
 				min_move_score = score;
