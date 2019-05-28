@@ -1,7 +1,7 @@
 #include "tictactoe.h"
-#include <algorithm>
 #include <bitset>
 #include <iostream>
+#include <limits>
 #include <stdexcept>
 #include <string>
 #include <utility>
@@ -98,38 +98,43 @@ int AI::minimax(const Board& position, int depth, bool maxPlayer)
 	{
 		return 0;
 	}
-	std::vector<std::pair<int, int>> moves{}; //vector of moves and their score
-	++depth;
-
-	//populate moves and score
-	bool calculating_player = maxPlayer ? is_o : !is_o;
-	for(int move : position.possible_moves())
-	{
-		//possible_moves() returns indexes that will return true when used in place(int, bool)
-		Board possible_position{ position };
-		possible_position.place(move, calculating_player);
-		//calculate score for possible_position
-		int score = minimax(possible_position, depth, !maxPlayer);
-
-		moves.push_back( {move, score} );
-	}
 
 	//do minimax calculation
 	if(maxPlayer)
 	{
-		//find max score
-		std::pair<int, int> max_move = *std::max_element( moves.begin(), moves.end(),
-				[](const auto lhs, const auto rhs) { return lhs.second < rhs.second; } );
+		int max_move{};
+		int max_move_score{ std::numeric_limits<int>::min()};
+		for(int move : position.possible_moves())
+		{
+			Board possible_position{ position };
+			possible_position.place(move, is_o);
+			int score = minimax(possible_position, ++depth, false);
+			if ( score >= max_move_score )
+			{
+				max_move = move;
+				max_move_score = score;
+			}
+		}
 
-		choice = max_move.first; //last call to this will be at first call to minimax() from best_move()
-		return max_move.second; //return max score
+		choice = max_move;//last call to this will be at first call to minimax() from best_move()
+		return max_move_score; //return max score
 	}
 	else
 	{
-		//find min score
-		std::pair<int, int> min_move = *std::min_element( moves.begin(), moves.end(),
-				[](const auto lhs, const auto rhs) { return lhs.second < rhs.second; } );
+		int min_move{};
+		int min_move_score{ std::numeric_limits<int>::max()};
+		for(int move : position.possible_moves())
+		{
+			Board possible_position{ position };
+			possible_position.place(move, !is_o);
+			int score = minimax(possible_position, ++depth, true);
+			if ( score <= min_move_score )
+			{
+				min_move = move;
+				min_move_score = score;
+			}
+		}
 
-		return min_move.second; //return min score
+		return min_move_score; //return max score
 	}
 }
