@@ -150,10 +150,10 @@ int main(){
 		}
 		else //AI turn
 		{
-			std::cout << board;//print player turn before printing AI turn
-
 			int best_move = ai.best_move(board);
 			board.place( best_move, turn);
+
+			std::cout << board;
 			//print AI turn
 			std::array<char,3> col_chars = { 'A', 'B', 'C' };
 			char col_input = col_chars.at( best_move % 3 );
