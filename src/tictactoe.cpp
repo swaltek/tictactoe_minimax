@@ -71,7 +71,7 @@ std::vector<int> Board::possible_moves() const
 		if( bits.test(i) == false)
 		{
 			moves.push_back(i);
-		}#include <utility>
+		}
 	}
 	return moves;
 }
