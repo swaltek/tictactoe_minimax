@@ -1,19 +1,20 @@
 #include "tictactoe.h"
-#include <cassert>
+#include <array>
+#include <ctime>
 #include <iostream>
+#include <random>
 #include <string>
 
-int ask_input(bool o)
+int ask_player_input()
 {
-	char player = o ? 'O' : 'X';
 	bool retry{ false };
 	int index{};
 
-	std::cout << "It's " << player << "'s turn. Where do you want to go(e.g. A1 B3 C2)? ";
+	std::cout << "It's your turn. Where do you want to go(e.g. A1 B3 C2)? ";
 	do{
 		if(retry)
 		{
-			std::cout << "No, no, no " << player << "! Input a letter followed by a number: ";
+			std::cout << "No, no, no! Input a letter followed by a number: ";
 		}
 		retry = false; //reset retry
 
@@ -117,21 +118,29 @@ std::ostream& operator<<(std::ostream& os,const Board& board)
 }
 
 int main(){
-	Board board{};
+	std::default_random_engine e{ static_cast<long unsigned int>(time(NULL)) };
+	bool turn{ e() % 2 };
 	bool player_turn{ ask_turn() };
+	Board board{};
 	AI ai{ !player_turn };
-	bool turn = !player_turn;
+	
+	//turn will be switched at start of game loop
+	if(turn != player_turn)//player first see above comment
+	{
+		std::cout << "You go first!\n" << board;
+	}
+	else std::cout << "Computer gets to go first this time. Good luck!\n";
+	
 	while(board.check_win(turn) == false && board.check_tie() == false)
 	{
 		turn = !turn;
 		if(turn == player_turn)
 		{
-			std::cout << board;
 			bool input_valid{false};
 			while(input_valid == false)
 			{
 				int input;
-				input = ask_input(turn);
+				input = ask_player_input();
 				input_valid = board.place(input, turn);
 				if( input_valid == false )
 					std::cout << "That place is take! Try again...\n";
@@ -140,8 +149,15 @@ int main(){
 		else //AI turn
 		{
 			int best_move = ai.best_move(board);
-			std::cout << "Computer goes to " << best_move << '\n';
-			assert( board.place( best_move, turn) );
+			board.place( best_move, turn);
+			std::cout << board;
+
+			//print AI turn
+			std::array<char,3> col_chars = { 'A', 'B', 'C' };
+			char col_input = col_chars.at( best_move % 3 );
+			int row_input = ((best_move + 1) / 3) + 1;
+
+			std::cout << "Computer picks " << col_input << row_input << '\n';
 		}
 	}
 	std::cout << board;
@@ -149,5 +165,5 @@ int main(){
 	{
 		std::cout << "Looks like its a tie...\n";
 	}
-	else std::cout << (turn ? 'O' : 'X') << " wins!\n";
+	else std::cout << (turn == player_turn ? "You won!" : "The computer wins..." )  << '\n';
 }
